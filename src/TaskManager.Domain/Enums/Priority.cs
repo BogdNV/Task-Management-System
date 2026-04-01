@@ -2,7 +2,7 @@ namespace TaskManager.Domain.Enums;
 
 public enum Priority
 {
-    Medium,
     Low,
+    Medium,
     High
 }
