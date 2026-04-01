@@ -9,17 +9,29 @@ public class TaskItem
     public string Description { get; private set; }
     public Status Status { get; private set; } = Status.New;
     public Priority Priority { get; private set; } = Priority.Medium;
-    public DateTime DueDate { get; private set; }
+    public DateTime? DueDate { get; private set; }
     public int ProjectId { get; private set; }
 
-    public TaskItem(string title, string description, int projectId, DateTime dueDate)
+    public TaskItem(string title, string description, int projectId, DateTime? dueDate)
     {
         ValidateTitle(title);
         ValidateDueDate(dueDate);
+        ValidateDescription(description);
         Title = title;
         Description = description;
         DueDate = dueDate;
         ProjectId = projectId;
+    }
+
+    public void UpdateDueDate(DateTime newDate)
+    {
+        ValidateDueDate(newDate);
+        DueDate = newDate;
+    }
+
+    public void UpdatePriority(Priority newPriority)
+    {
+        Priority = newPriority;
     }
 
     public void ChangeStatus(Status newStatus)
@@ -31,18 +43,28 @@ public class TaskItem
 
     public void AssignToProject(Project project)
     {
+        if (project.Id <= 0)
+            throw new ArgumentException("ID проекта должен быть положительным", nameof(project.Id));
+
         project.AddTask(this);
+        ProjectId = project.Id;
     }
 
     private static void ValidateTitle(string title)
     {
         if (string.IsNullOrEmpty(title))
-            throw new ArgumentNullException(nameof(title), "Название не может быть пустым");
+            throw new ArgumentException("Название не может быть пустым", nameof(title));
     }
 
-    private static void ValidateDueDate(DateTime dueDate)
+    private static void ValidateDueDate(DateTime? dueDate)
     {
-        if (dueDate < DateTime.UtcNow)
+        if (dueDate.HasValue && dueDate.Value < DateTime.UtcNow)
             throw new ArgumentException("Дедлайн не может быть в прошлом", nameof(dueDate));
+    }
+
+    private static void ValidateDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ArgumentException("Описание задачи не может быть пустым", nameof(description));
     }
 }
