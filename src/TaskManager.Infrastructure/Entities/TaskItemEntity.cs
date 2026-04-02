@@ -10,14 +10,14 @@ public class TaskItemEntity
     [Required]
     [MaxLength(100)]
     [MinLength(5)]
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; }
     [Required]
     [MaxLength(1000)]
-    public string Description { get; set; } = string.Empty;
+    public string Description { get; set; }
     [Required]
-    public Status Status { get; set; } = Status.New;
+    public Status Status { get; set; }
     [Required]
-    public Priority Priority { get; set; } = Priority.Medium;
+    public Priority Priority { get; set; }
     public DateTime? DueDate { get; set; }
     [Required]
     public int ProjectId { get; set; }
