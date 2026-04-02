@@ -17,4 +17,6 @@ public class ProjectEntity
     public DateTime CreatedAt { get; set; }
     [Required]
     public int OwnerId { get; set; }
+
+    public List<TaskItemEntity> Tasks { get; set; } = new();
 }
