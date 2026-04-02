@@ -23,6 +23,20 @@ public class TaskItem
         ProjectId = projectId;
     }
 
+    public TaskItem(int id, string title, string description, Status status, Priority priority, int projectId, DateTime? dueDate)
+    {
+        ValidateTitle(title);
+        ValidateDueDate(dueDate);
+        ValidateDescription(description);
+        Id = id;
+        Title = title;
+        Description = description;
+        Status = status;
+        Priority = priority;
+        DueDate = dueDate;
+        ProjectId = projectId;
+    }
+
     public void UpdateDueDate(DateTime newDate)
     {
         ValidateDueDate(newDate);

@@ -2,6 +2,8 @@ namespace TaskManager.Domain.Entities;
 
 public class Project
 {
+    public const int MAX_NAME_LENGTH = 100;
+    public const int MIN_NAME_LENGTH = 5;
     public int Id { get; private set; }
     public string Name { get; private set; }
     public string Description { get; private set; }
@@ -19,6 +21,16 @@ public class Project
         OwnerId = ownerId;
         CreatedAt = DateTime.UtcNow;
 
+    }
+
+    public Project(int id, string name, string description, int ownerId, DateTime createdAt)
+    {
+        ValidateName(name);
+        Id = id;
+        Name = name;
+        Description = description;
+        OwnerId = ownerId;
+        CreatedAt = createdAt;
     }
 
     public void AddTask(TaskItem task)
@@ -39,6 +51,6 @@ public class Project
         if (string.IsNullOrEmpty(name))
             throw new ArgumentException("Название не должно быть пустым", nameof(name));
         if (name.Length < 5)
-            throw new ArgumentException("Название должно быть длиной мнимум 5 символов", nameof(name));
+            throw new ArgumentException($"Название должно быть длиной мнимум {MIN_NAME_LENGTH} символов", nameof(name));
     }
 }
