@@ -3,7 +3,7 @@ using TaskManager.Infrastructure.Entities;
 
 namespace TaskManager.Infrastructure.Mappers;
 
-public static class ProjectMapper
+public static partial class ProjectMapper
 {
     public static Project ToDomain(this ProjectEntity entity)
     {
@@ -14,7 +14,7 @@ public static class ProjectMapper
     {
         return new ProjectEntity
         {
-            Id = project.Id,
+            // Id = project.Id,
             Name = project.Name,
             Description = project.Description,
             OwnerId = project.OwnerId,
