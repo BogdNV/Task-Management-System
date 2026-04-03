@@ -19,4 +19,6 @@ public class ProjectEntity
     public int OwnerId { get; set; }
 
     public List<TaskItemEntity> Tasks { get; set; } = new();
+
+    public DateTime? LastModified { get; set; }
 }

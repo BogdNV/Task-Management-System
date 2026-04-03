@@ -26,5 +26,8 @@ public class ProjectConfiguration : IEntityTypeConfiguration<ProjectEntity>
 
         builder.Property(p => p.OwnerId)
                 .IsRequired();
+
+        builder.Property(p => p.LastModified)
+                .HasDefaultValue(null);
     }
 }
