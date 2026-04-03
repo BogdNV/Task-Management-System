@@ -15,11 +15,12 @@ public class ProjectRepository : IProjectRepository
     {
         _context = context;
     }
-    public async Task AddAsync(Project project)
+    public async Task<Project> AddAsync(Project project)
     {
-
-        await _context.Projects.AddAsync(project.ToEntity());
+        var entity = project.ToEntity();
+        await _context.Projects.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return entity.ToDomain();
     }
 
     public async Task DeleteAsync(int id)
