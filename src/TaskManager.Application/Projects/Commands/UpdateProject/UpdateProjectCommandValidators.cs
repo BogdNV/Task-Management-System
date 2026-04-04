@@ -1,7 +1,6 @@
 using FluentValidation;
-using TaskManager.Application.Projects.Commands.UpdateProject;
 
-namespace TaskManager.Application.Projects.Validators;
+namespace TaskManager.Application.Projects.Commands.UpdateProject;
 
 public class UpdateProjectCommandValidators : AbstractValidator<UpdateProjectCommand>
 {

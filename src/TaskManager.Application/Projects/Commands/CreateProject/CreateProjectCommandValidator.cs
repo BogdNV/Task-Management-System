@@ -1,7 +1,6 @@
 using FluentValidation;
-using TaskManager.Application.Projects.Commands.CreateProject;
 
-namespace TaskManager.Application.Projects.Validators;
+namespace TaskManager.Application.Projects.Commands.CreateProject;
 
 public class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand>
 {
