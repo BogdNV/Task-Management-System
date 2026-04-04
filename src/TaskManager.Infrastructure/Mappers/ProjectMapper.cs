@@ -14,7 +14,6 @@ public static partial class ProjectMapper
     {
         return new ProjectEntity
         {
-            // Id = project.Id,
             Name = project.Name,
             Description = project.Description,
             OwnerId = project.OwnerId,

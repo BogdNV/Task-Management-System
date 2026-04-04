@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
 using TaskManager.Domain.Interfaces;
 using TaskManager.Infrastructure.Context;
-using TaskManager.Infrastructure.Entities;
 using TaskManager.Infrastructure.Mappers;
 
 namespace TaskManager.Infrastructure.Repositories;
@@ -51,6 +50,7 @@ public class ProjectRepository : IProjectRepository
                     .Where(p => p.Id == project.Id)
                     .ExecuteUpdateAsync(s => s
                             .SetProperty(x => x.Name, project.Name)
-                            .SetProperty(x => x.Description, project.Description));
+                            .SetProperty(x => x.Description, project.Description)
+                            .SetProperty(x => x.LastModified, DateTime.UtcNow));
     }
 }
