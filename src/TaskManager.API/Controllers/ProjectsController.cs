@@ -1,10 +1,12 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.Application.Mappers;
 using TaskManager.Application.Projects.Commands.CreateProject;
+using TaskManager.Application.Projects.Commands.DeleteProject;
+using TaskManager.Application.Projects.Commands.PatchProject;
 using TaskManager.Application.Projects.Commands.UpdateProject;
 using TaskManager.Application.Projects.DTO;
-using TaskManager.Domain.Interfaces;
-using TaskManager.Infrastructure.Mappers;
+using TaskManager.Application.Projects.Queries.GetAllProjects;
+using TaskManager.Application.Projects.Queries.GetProjectById;
 
 namespace TaskManager.API.Controllers;
 
@@ -12,72 +14,54 @@ namespace TaskManager.API.Controllers;
 [Route("api/[controller]")]
 public class ProjectsController : ControllerBase
 {
-    private readonly IProjectRepository _repository;
-    public ProjectsController(IProjectRepository repository)
+    private readonly IMediator _mediator;
+    public ProjectsController(IMediator mediator)
     {
-        _repository = repository;
-
+        _mediator = mediator;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProjectDto>>> GetAll(CancellationToken ct)
     {
-        var projects = await _repository.GetAllAsync();
-        var dtos = projects.Select(p => p.ToDto());
-        return Ok(dtos);
+        var results = await _mediator.Send(new GetAllProjectsQuery(), ct);
+        return Ok(results);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProjectDto>> GetById(int id, CancellationToken ct)
     {
         if (id <= 0) return BadRequest("Неверный ID проекта");
-        var result = await _repository.GetByIdAsync(id);
+        var result = await _mediator.Send(new GetProjectByIdQuery(id), ct);
 
-        return result is null ? NotFound() : Ok(result.ToDto());
+        return result is null ? NotFound() : Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateProjectCommand dto, CancellationToken ct)
+    public async Task<IActionResult> Create(CreateProjectCommand command, CancellationToken ct)
     {
 
-        var project = await _repository.AddAsync(dto.ToDomain());
-        var resultDto = project.ToDto();
+        var result = await _mediator.Send(command, ct);
 
-        return CreatedAtAction(nameof(GetById), new { id = project.Id }, resultDto);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, UpdateProjectCommand dto, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, UpdateProjectCommand command, CancellationToken ct)
     {
         if (id <= 0) return BadRequest("Неверный ID проекта");
+        if (id != command.Id) return BadRequest("ID не совпадает");
 
-        var project = await _repository.GetByIdAsync(id);
-        if (project is null) return NotFound();
-
-        // Вызов доменных методов обновления
-        project.UpdateName(dto.Name);
-        project.UpdateDescription(dto.Description);
-
-        await _repository.UpdateAsync(project);
+        await _mediator.Send(command, ct);
         return NoContent();
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<IActionResult> Patch(int id, PatchProjectCommand patch, CancellationToken ct)
+    public async Task<IActionResult> Patch(int id, PatchProjectCommand command, CancellationToken ct)
     {
         if (id <= 0) return BadRequest("Неверный ID проекта");
+        if (id != command.Id) return BadRequest("ID не совпадает");
 
-        var project = await _repository.GetByIdAsync(id);
-        if (project is null) return NotFound();
-
-        if (string.IsNullOrEmpty(patch.Name)
-            && string.IsNullOrEmpty(patch.Description))
-            return NoContent();
-
-        if (!string.IsNullOrEmpty(patch.Name)) project.UpdateName(patch.Name);
-        if (!string.IsNullOrEmpty(patch.Description)) project.UpdateDescription(patch.Description);
-
-        await _repository.UpdateAsync(project);
+        await _mediator.Send(command, ct);
         return NoContent();
     }
 
@@ -86,7 +70,7 @@ public class ProjectsController : ControllerBase
     {
         if (id <= 0) return BadRequest("Неверный ID проекта");
 
-        await _repository.DeleteAsync(id);
+        await _mediator.Send(new DeleteProjectCommand(id), ct);
 
         return NoContent();
     }
