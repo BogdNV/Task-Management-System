@@ -17,6 +17,7 @@ public class Project
     public Project(string name, string description, int ownerId)
     {
         ValidateName(name);
+        ValidateDescription(description);
         Name = name;
         Description = description;
         OwnerId = ownerId;
@@ -27,6 +28,7 @@ public class Project
     public Project(int id, string name, string description, int ownerId, DateTime createdAt)
     {
         ValidateName(name);
+        ValidateDescription(description);
         Id = id;
         Name = name;
         Description = description;
@@ -57,7 +59,7 @@ public class Project
     {
         if (string.IsNullOrEmpty(name))
             throw new ArgumentException("Название не должно быть пустым", nameof(name));
-        if (name.Length < 5)
+        if (name.Length < MIN_NAME_LENGTH)
             throw new ArgumentException($"Название должно быть длиной мнимум {MIN_NAME_LENGTH} символов", nameof(name));
     }
 
@@ -67,7 +69,7 @@ public class Project
             throw new ArgumentException("Описание не должно быть пустым", nameof(description));
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Описание состоит из пробелов", nameof(description));
-        if (description.Length > 1000)
+        if (description.Length > MAX_DESCRIPTION_LENGTH)
             throw new ArgumentException($"Превышен порог в {MAX_DESCRIPTION_LENGTH} символов", nameof(description));
     }
 }
