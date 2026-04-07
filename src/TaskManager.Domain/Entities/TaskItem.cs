@@ -68,6 +68,8 @@ public class TaskItem
     {
         if (string.IsNullOrEmpty(title))
             throw new ArgumentException("Название не может быть пустым", nameof(title));
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ArgumentException("Название состоит из пробелов", nameof(title));
     }
 
     private static void ValidateDueDate(DateTime? dueDate)
