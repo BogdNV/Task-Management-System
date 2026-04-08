@@ -1,6 +1,4 @@
 using MediatR;
-using TaskManager.Application.Mappers;
-using TaskManager.Application.Projects.DTO;
 using TaskManager.Domain.Interfaces;
 
 namespace TaskManager.Application.Projects.Commands.UpdateProject;
