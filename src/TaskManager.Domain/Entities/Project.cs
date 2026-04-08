@@ -18,6 +18,7 @@ public class Project
     {
         ValidateName(name);
         ValidateDescription(description);
+        ValidateOwnerId(ownerId);
         Name = name;
         Description = description;
         OwnerId = ownerId;
@@ -29,6 +30,7 @@ public class Project
     {
         ValidateName(name);
         ValidateDescription(description);
+        ValidateOwnerId(ownerId);
         Id = id;
         Name = name;
         Description = description;
@@ -60,7 +62,7 @@ public class Project
         if (string.IsNullOrEmpty(name))
             throw new ArgumentException("Название не должно быть пустым", nameof(name));
         if (name.Length < MIN_NAME_LENGTH)
-            throw new ArgumentException($"Название должно быть длиной мнимум {MIN_NAME_LENGTH} символов", nameof(name));
+            throw new ArgumentException($"Название должно быть длиной минимум {MIN_NAME_LENGTH} символов", nameof(name));
     }
 
     private static void ValidateDescription(string description)
@@ -71,5 +73,11 @@ public class Project
             throw new ArgumentException("Описание состоит из пробелов", nameof(description));
         if (description.Length > MAX_DESCRIPTION_LENGTH)
             throw new ArgumentException($"Превышен порог в {MAX_DESCRIPTION_LENGTH} символов", nameof(description));
+    }
+
+    private static void ValidateOwnerId(int id)
+    {
+        if (id < 1)
+            throw new ArgumentException("Неверный ID владельца", nameof(id));
     }
 }
