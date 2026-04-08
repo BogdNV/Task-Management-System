@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using TaskManager.Domain.Entities;
-using Xunit;
 
 namespace TaskManager.UnitTests.Domain;
 
@@ -35,7 +29,7 @@ public class ProjectTests
     [Theory]
     [InlineData("", "Название не должно быть пустым")]
     [InlineData(null, "Название не должно быть пустым")]
-    [InlineData("abc", "Название должно быть длиной мнимум 5 символов")]
+    [InlineData("abc", "Название должно быть длиной минимум 5 символов")]
     public void Ctor_WithNameTooShortNullOrEmpty_ThrowsArgumentException(string invalidName, string expectedMessage)
     {
         var ex = Assert.Throws<ArgumentException>(() => new Project(invalidName, "desc", 1));
@@ -67,8 +61,8 @@ public class ProjectTests
     [Theory]
     [InlineData(null, "Название не должно быть пустым")]
     [InlineData("", "Название не должно быть пустым")]
-    [InlineData("abc", "Название должно быть длиной мнимум 5 символов")]
-    public void UpdateName_WithInvalidName_ShouldThrowArgumentException(string invalidName, string expectedMessage)
+    [InlineData("abc", "Название должно быть длиной минимум 5 символов")]
+    public void UpdateName_WithInvalidName_ShouldThrowArgumentException(string? invalidName, string expectedMessage)
     {
         var proj = new Project("Valid Project name", "Some description", 1);
 
@@ -105,11 +99,11 @@ public class ProjectTests
     public void UpdateDescription_ExceedsMaxLength_ShouldThrowArgumentException()
     {
         var proj = new Project("Valid Project name", "Some description", 1);
-        var newDescription = new string('a', 1001);
+        var newDescription = new string('a', Project.MAX_DESCRIPTION_LENGTH + 1);
 
         var ex = Assert.Throws<ArgumentException>(() => proj.UpdateDescription(newDescription));
 
-        Assert.Contains("Превышен порог в 1000 символов", ex.Message);
+        Assert.Contains($"Превышен порог в {Project.MAX_DESCRIPTION_LENGTH} символов", ex.Message);
     }
 
     [Fact]
