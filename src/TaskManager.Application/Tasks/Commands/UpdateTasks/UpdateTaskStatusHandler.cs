@@ -21,7 +21,7 @@ public class UpdateTaskStatusHandler
             throw new NotFoundException($"Задача c ID {command.TaskId} не найдена");
 
         var project = await _projectRepository.GetByIdAsync(task.ProjectId);
-        if (project is null || command.CurrentUserId != project.OwnerId)
+        if (project is null || command.CurrentUserId != project.UserId)
             throw new ForbiddenException("Нет прав на изменения статуса в текущей задаче");
 
         task.ChangeStatus(command.NewStatus);

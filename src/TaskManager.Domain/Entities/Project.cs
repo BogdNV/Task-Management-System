@@ -9,32 +9,30 @@ public class Project
     public string Name { get; private set; }
     public string Description { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public int OwnerId { get; private set; }
+    public Guid UserId { get; private set; }
 
     private readonly List<TaskItem> _tasks = new();
     public IReadOnlyCollection<TaskItem> Tasks => _tasks;
 
-    public Project(string name, string description, int ownerId)
+    public Project(string name, string description, Guid ownerId)
     {
         ValidateName(name);
         ValidateDescription(description);
-        ValidateOwnerId(ownerId);
         Name = name;
         Description = description;
-        OwnerId = ownerId;
+        UserId = ownerId;
         CreatedAt = DateTime.UtcNow;
 
     }
 
-    public Project(int id, string name, string description, int ownerId, DateTime createdAt)
+    public Project(int id, string name, string description, Guid ownerId, DateTime createdAt)
     {
         ValidateName(name);
         ValidateDescription(description);
-        ValidateOwnerId(ownerId);
         Id = id;
         Name = name;
         Description = description;
-        OwnerId = ownerId;
+        UserId = ownerId;
         CreatedAt = createdAt;
     }
 
@@ -73,11 +71,5 @@ public class Project
             throw new ArgumentException("Описание состоит из пробелов", nameof(description));
         if (description.Length > MAX_DESCRIPTION_LENGTH)
             throw new ArgumentException($"Превышен порог в {MAX_DESCRIPTION_LENGTH} символов", nameof(description));
-    }
-
-    private static void ValidateOwnerId(int id)
-    {
-        if (id < 1)
-            throw new ArgumentException("Неверный ID владельца", nameof(id));
     }
 }

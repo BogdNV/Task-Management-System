@@ -16,9 +16,10 @@ public class ProjectEntity
     [Required]
     public DateTime CreatedAt { get; set; }
     [Required]
-    public int OwnerId { get; set; }
+    public Guid UserId { get; set; }
+    public UserEntity? User { get; set; }
 
-    public List<TaskItemEntity> Tasks { get; set; } = new();
+    public ICollection<TaskItemEntity> Tasks { get; set; } = new List<TaskItemEntity>();
 
     public DateTime? LastModified { get; set; }
 }

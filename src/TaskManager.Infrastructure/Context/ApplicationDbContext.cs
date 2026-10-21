@@ -15,5 +15,6 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TaskItemConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 }

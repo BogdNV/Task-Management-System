@@ -8,5 +8,5 @@ public record CreateProjectCommand(
 
     string Description,
 
-    int OwnerId
+    Guid UserId
 ) : IRequest<ProjectDto>;

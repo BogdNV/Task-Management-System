@@ -12,22 +12,24 @@ public class ProjectConfiguration : IEntityTypeConfiguration<ProjectEntity>
         builder.HasKey(x => x.Id);
 
         builder.Property(p => p.Id)
-                .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd();
 
         builder.Property(p => p.Name)
-                .HasMaxLength(100)
-                .IsRequired();
+            .HasMaxLength(100)
+            .IsRequired();
 
         builder.Property(p => p.Description)
-                .IsRequired();
+            .IsRequired();
 
         builder.Property(p => p.CreatedAt)
-                .IsRequired();
+            .IsRequired();
 
-        builder.Property(p => p.OwnerId)
-                .IsRequired();
+        builder.HasOne(p => p.User)
+            .WithMany(u => u.Projects)
+            .HasForeignKey(p => p.UserId)
+            .IsRequired();
 
         builder.Property(p => p.LastModified)
-                .HasDefaultValue(null);
+            .HasDefaultValue(null);
     }
 }

@@ -12,12 +12,12 @@ public static partial class ProjectMapper
             project.Id,
             project.Name,
             project.Description,
-            project.OwnerId
+            project.UserId
         );
     }
 
     public static Project ToDomain(this CreateProjectCommand dto)
     {
-        return new Project(dto.Name, dto.Description, dto.OwnerId);
+        return new Project(dto.Name, dto.Description, dto.UserId);
     }
 }

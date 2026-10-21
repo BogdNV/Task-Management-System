@@ -18,7 +18,7 @@ public class CreateTaskHandler
     public async Task<int> Handle(CreateTaskCommand command, CancellationToken ct)
     {
         var project = await _projectRepository.GetByIdAsync(command.ProjectId);
-        if (project is null || project.OwnerId != command.CurrentUserId)
+        if (project is null || project.UserId != command.CurrentUserId)
             throw new ForbiddenException("Нет прав на создание задачи в этом проекте");
 
         var task = new TaskItem(command.Title, command.Description, command.ProjectId, command.DueDate);

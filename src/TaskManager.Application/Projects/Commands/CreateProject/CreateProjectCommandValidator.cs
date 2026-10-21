@@ -14,8 +14,5 @@ public class CreateProjectCommandValidator : AbstractValidator<CreateProjectComm
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Описание обязательно")
             .MaximumLength(1000).WithMessage("Максимум 1000 символов");
-
-        RuleFor(x => x.OwnerId)
-            .GreaterThan(0).WithMessage("Неверный ID владельца");
     }
 }

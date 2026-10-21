@@ -10,11 +10,19 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddOpenApi();
         var connectionString = builder.Configuration.GetConnectionString("PostgreSqlConnection");
         builder.Services.AddInfrastructure(connectionString);
         builder.Services.AddApplication(builder);
 
         var app = builder.Build();
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         app.MapControllers();
