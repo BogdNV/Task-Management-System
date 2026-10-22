@@ -30,11 +30,5 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             .HasColumnName("password")
             .HasMaxLength(255)
             .IsRequired();
-
-        builder.HasMany(u => u.Projects)
-            .WithOne()
-            .HasForeignKey("user_id")
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

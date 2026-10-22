@@ -16,18 +16,9 @@ public class User
 
     public User(string name, string password, string email)
     {
-        ValidateField(name);
-        ValidateField(password);
-        ValidateField(email);
         Name = name;
         Password = password;
         Email = email;
-    }
-
-    private static void ValidateField(string field)
-    {
-        if (string.IsNullOrWhiteSpace(field))
-            throw new ArgumentException("Поле не может быть пустым или состоять из одних пробелов", nameof(field));
     }
 
 }

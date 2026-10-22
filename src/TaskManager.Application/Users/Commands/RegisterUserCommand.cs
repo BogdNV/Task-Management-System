@@ -7,7 +7,7 @@ using TaskManager.Application.Users.DTO;
 
 namespace TaskManager.Application.Users.Commands;
 
-public class RegisterUserCommand : IRequest<UserDto>
+public class RegisterUserCommand : IRequest<RegisterUserCommandResult>
 {
     public string Name { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;

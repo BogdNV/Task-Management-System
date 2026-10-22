@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using TaskManager.Domain.Enums;
 
 namespace TaskManager.Infrastructure.Entities;
@@ -10,10 +9,10 @@ public class TaskItemEntity
     [Required]
     [MaxLength(100)]
     [MinLength(5)]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     [Required]
     [MaxLength(1000)]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     [Required]
     public Status Status { get; set; }
     [Required]

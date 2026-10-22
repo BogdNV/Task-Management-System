@@ -5,5 +5,5 @@ public record CreateTaskCommand(
     string Description,
     int ProjectId,
     DateTime? DueDate,
-    int CurrentUserId
+    Guid CurrentUserId
 );

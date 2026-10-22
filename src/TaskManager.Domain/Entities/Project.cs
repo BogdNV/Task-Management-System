@@ -14,25 +14,25 @@ public class Project
     private readonly List<TaskItem> _tasks = new();
     public IReadOnlyCollection<TaskItem> Tasks => _tasks;
 
-    public Project(string name, string description, Guid ownerId)
+    public Project(string name, string description, Guid userId)
     {
         ValidateName(name);
         ValidateDescription(description);
         Name = name;
         Description = description;
-        UserId = ownerId;
+        UserId = userId;
         CreatedAt = DateTime.UtcNow;
 
     }
 
-    public Project(int id, string name, string description, Guid ownerId, DateTime createdAt)
+    public Project(int id, string name, string description, Guid userId, DateTime createdAt)
     {
         ValidateName(name);
         ValidateDescription(description);
         Id = id;
         Name = name;
         Description = description;
-        UserId = ownerId;
+        UserId = userId;
         CreatedAt = createdAt;
     }
 

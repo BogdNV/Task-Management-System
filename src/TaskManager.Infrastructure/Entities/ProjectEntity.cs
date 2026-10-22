@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using TaskManager.Domain.Entities;
 
 namespace TaskManager.Infrastructure.Entities;
 

@@ -8,6 +8,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<ProjectEntity> Projects => Set<ProjectEntity>();
     public DbSet<TaskItemEntity> Tasks => Set<TaskItemEntity>();
+    public DbSet<UserEntity> Users => Set<UserEntity>();
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
