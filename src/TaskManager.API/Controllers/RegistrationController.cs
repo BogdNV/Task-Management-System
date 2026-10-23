@@ -1,9 +1,10 @@
 using MediatR;
-using TaskManager.API.Models.Request.User;
+using TaskManager.API.Models.Request;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.Users.Commands;
 using TaskManager.Application.Users.DTO;
-using TaskManager.API.Models.Extensions;
+using AutoMapper;
+using TaskManager.API.Models.Response;
 
 namespace TaskManager.API.Controllers;
 
@@ -12,18 +13,24 @@ namespace TaskManager.API.Controllers;
 public class RegistrationController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public RegistrationController(IMediator mediator)
+    public RegistrationController(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken)
     {
-        var command = request.ToCommand();
+        var command = _mapper.Map<RegisterUserCommand>(request);
         var result = await _mediator.Send(command, cancellationToken);
-        return Ok(result);
+        return Ok(new ApiResponse<RegisterResponse>()
+        {
+            Data = _mapper.Map<RegisterResponse>(result),
+            Message = "Done"
+        });
     }
 }

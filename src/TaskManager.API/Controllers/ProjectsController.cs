@@ -1,5 +1,8 @@
+using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskManager.API.Models.Request;
 using TaskManager.Application.Projects.Commands.CreateProject;
 using TaskManager.Application.Projects.Commands.DeleteProject;
 using TaskManager.Application.Projects.Commands.PatchProject;
@@ -12,20 +15,23 @@ namespace TaskManager.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ProjectsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public ProjectsController(IMediator mediator)
+    private readonly IMapper _mapper;
+    public ProjectsController(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProjectDto>>> GetAll(CancellationToken ct)
-    {
-        var results = await _mediator.Send(new GetAllProjectsQuery(), ct);
-        return Ok(results);
-    }
+    // [HttpGet]
+    // public async Task<ActionResult<IEnumerable<ProjectDto>>> GetAll(CancellationToken ct)
+    // {
+    //     var results = await _mediator.Send(new GetAllProjectsQuery(), ct);
+    //     return Ok(results);
+    // }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ProjectDto>> GetById(int id, CancellationToken ct)
@@ -37,9 +43,10 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateProjectCommand command, CancellationToken ct)
+    public async Task<IActionResult> Create(CreateProjectRequest request, CancellationToken ct)
     {
 
+        var command = _mapper.Map<CreateProjectCommand>(request);
         var result = await _mediator.Send(command, ct);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
