@@ -2,11 +2,9 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Abstractions.Inrefaces;
-using TaskManager.Application.Mappers;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.Context;
 using TaskManager.Infrastructure.Entities;
-using TaskManager.Infrastructure.Mappers;
 
 namespace TaskManager.Application.Users.Commands;
 
@@ -38,14 +36,20 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
             // throw exception
         }
 
-        request.Password = _passwordHasher.HashPassword(null, request.Password);
+        request.Password = _passwordHasher.HashPassword(null!, request.Password);
 
-        var user = request.ToDomain().ToEntity();
+        var user = new UserEntity
+        {
+            Name = request.Name,
+            Email = request.Email,
+            Password = request.Password,
+
+        };
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        var accessToken = _tokenService.GenerateAccessToken(user.Id, user.Name);
+        var accessToken = _tokenService.GenerateAccessToken(user.Id);
 
         return new RegisterUserCommandResult()
         {

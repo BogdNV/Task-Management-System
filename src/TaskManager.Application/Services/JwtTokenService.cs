@@ -14,27 +14,26 @@ namespace TaskManager.Application.Services;
 
 public class JwtTokenService : IJwtTokenService
 {
-    private readonly JwtTokenOptions _options;
+    private readonly IOptions<JwtTokenOptions> _options;
     public JwtTokenService(IOptions<JwtTokenOptions> options)
     {
-        _options = options.Value;
+        _options = options;
     }
 
-    public string GenerateAccessToken(Guid id, string name)
+    public string GenerateAccessToken(Guid id)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.SecretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>()
         {
-            new Claim("id", id.ToString()),
-            new Claim("userName", name)
+            new Claim(ClaimTypes.NameIdentifier, id.ToString())
         };
 
         var token = new JwtSecurityToken(
-            expires: DateTime.UtcNow.AddMinutes(_options.AccessTokenExpirationMinutes),
-            issuer: _options.Issuer,
-            audience: _options.Audience,
+            expires: DateTime.UtcNow.Add(_options.Value.Expires),
+            // issuer: _options.Issuer,
+            // audience: _options.Audience,
             signingCredentials: creds,
             claims: claims
 
