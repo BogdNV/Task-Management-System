@@ -4,10 +4,10 @@ using TaskManager.Infrastructure.Entities;
 
 namespace TaskManager.Application.Mappings.Project;
 
-public partial class ProjectMappingProfile : Profile
+public class ProjectMappingProfile : Profile
 {
     public ProjectMappingProfile()
     {
-        CreateMap<ProjectEntity, ProjectDto>();
+        CreateMap<ProjectEntity, ProjectDto>().ForMember(p => p.Name, opt => opt.MapFrom(src => src.User!.Name));
     }
 }

@@ -1,24 +1,30 @@
 using MediatR;
-using TaskManager.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using TaskManager.Application.Exceptions;
+using TaskManager.Infrastructure.Context;
 
-namespace TaskManager.Application.Projects.Commands.UpdateProject;
+namespace TaskManager.Application.Projects.Commands;
 
-public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand>
+public class PutProjectHandler : IRequestHandler<PutProjectCommand>
 {
-    private readonly IProjectRepository _repository;
-    public UpdateProjectHandler(IProjectRepository repository)
+    private readonly ApplicationDbContext _context;
+    public PutProjectHandler(ApplicationDbContext context)
     {
-        _repository = repository;
+        _context = context;
     }
 
-    public async Task Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+    public async Task Handle(PutProjectCommand command, CancellationToken cancellationToken)
     {
-        var project = await _repository.GetByIdAsync(request.Id);
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == command.Id);
         if (project is null) return;
 
-        project.UpdateName(request.Name);
-        project.UpdateDescription(request.Description);
+        if (project.UserId != command.UserId) throw new UnauthorizedException("Unauthrized");
 
-        await _repository.UpdateAsync(project);
+
+        project.Title = command.Title;
+        project.Description = command.Description;
+        project.LastModified = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
     }
 }

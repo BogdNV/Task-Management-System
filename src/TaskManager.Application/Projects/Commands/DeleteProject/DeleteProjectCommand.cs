@@ -1,5 +1,9 @@
 using MediatR;
 
-namespace TaskManager.Application.Projects.Commands.DeleteProject;
+namespace TaskManager.Application.Projects.Commands;
 
-public record DeleteProjectCommand(int Id) : IRequest;
+public class DeleteProjectCommand : IRequest
+{
+    public Guid UserId { get; set; }
+    public int Id { get; set; }
+}

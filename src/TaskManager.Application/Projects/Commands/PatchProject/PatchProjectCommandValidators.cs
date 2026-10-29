@@ -1,15 +1,15 @@
 using FluentValidation;
 
-namespace TaskManager.Application.Projects.Commands.PatchProject;
+namespace TaskManager.Application.Projects.Commands;
 
 public class PatchProjectCommandValidators : AbstractValidator<PatchProjectCommand>
 {
     public PatchProjectCommandValidators()
     {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Title)
             .MinimumLength(5).WithMessage("Минимум 5 символов")
             .MaximumLength(100).WithMessage("Максимум 100 символов")
-            .When(x => !string.IsNullOrEmpty(x.Name), ApplyConditionTo.CurrentValidator);
+            .When(x => !string.IsNullOrEmpty(x.Title), ApplyConditionTo.CurrentValidator);
 
         RuleFor(x => x.Description)
             .MaximumLength(1000).WithMessage("Максимум 1000 символов")

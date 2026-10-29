@@ -1,6 +1,12 @@
 using MediatR;
-using TaskManager.Application.Projects.DTO;
 
-namespace TaskManager.Application.Projects.Commands.UpdateProject;
+namespace TaskManager.Application.Projects.Commands;
 
-public record UpdateProjectCommand(int Id, string Name, string Description) : IRequest;
+public class PutProjectCommand : IRequest
+{
+    public Guid UserId { get; set; }
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+
+}

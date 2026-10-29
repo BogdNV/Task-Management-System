@@ -1,12 +1,12 @@
 using FluentValidation;
 
-namespace TaskManager.Application.Projects.Commands.UpdateProject;
+namespace TaskManager.Application.Projects.Commands;
 
-public class UpdateProjectCommandValidators : AbstractValidator<UpdateProjectCommand>
+public class PutProjectCommandValidators : AbstractValidator<PutProjectCommand>
 {
-    public UpdateProjectCommandValidators()
+    public PutProjectCommandValidators()
     {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Название не может быть пустым")
             .MinimumLength(5).WithMessage("Минимум 5 символов")
             .MaximumLength(100).WithMessage("Максимум 100 символов");

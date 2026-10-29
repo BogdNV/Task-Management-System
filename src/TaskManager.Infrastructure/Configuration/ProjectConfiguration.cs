@@ -14,7 +14,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<ProjectEntity>
         builder.Property(p => p.Id)
             .ValueGeneratedOnAdd();
 
-        builder.Property(p => p.Name)
+        builder.Property(p => p.Title)
             .HasMaxLength(100)
             .IsRequired();
 

@@ -1,5 +1,11 @@
 using MediatR;
 
-namespace TaskManager.Application.Projects.Commands.PatchProject;
+namespace TaskManager.Application.Projects.Commands;
 
-public record PatchProjectCommand(int Id, string? Name, string? Description) : IRequest;
+public class PatchProjectCommand : IRequest
+{
+    public Guid UserId { get; set; }
+    public int Id { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+}

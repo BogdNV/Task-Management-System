@@ -1,27 +1,36 @@
+using AutoMapper;
 using MediatR;
-using TaskManager.Application.Mappers;
 using TaskManager.Application.Projects.DTO;
-using TaskManager.Domain.Interfaces;
+using TaskManager.Infrastructure.Context;
+using TaskManager.Infrastructure.Entities;
 
-namespace TaskManager.Application.Projects.Commands.CreateProject;
+namespace TaskManager.Application.Projects.Commands;
 
 public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, ProjectDto>
 {
-    private readonly IProjectRepository _repository;
+    private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public CreateProjectHandler(IProjectRepository repository)
+    public CreateProjectHandler(ApplicationDbContext context, IMapper mapper)
     {
-        _repository = repository;
+        _context = context;
+        _mapper = mapper;
     }
     public async Task<ProjectDto> Handle(CreateProjectCommand request, CancellationToken ct)
     {
-        // 1. Маппинг Command → Domain
-        var project = request.ToDomain();
 
-        // 2. Сохранение через репозиторий
-        var savedProject = await _repository.AddAsync(project);
+        var project = new ProjectEntity()
+        {
+            Title = request.Title,
+            Description = request.Description,
+            UserId = request.UserId,
+            CreatedAt = DateTime.UtcNow
+        };
 
-        // 3. Маппинг Domain → DTO для ответа
-        return savedProject.ToDto();
+
+        _context.Add(project);
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<ProjectDto>(project);
     }
 }
