@@ -2,5 +2,6 @@ namespace TaskManager.Abstractions.Inrefaces;
 
 public interface IGetUserIdService
 {
-    Guid GetUserId(string header);
+    Guid Id { get; }
+    bool IsAuthenticated { get; }
 }
