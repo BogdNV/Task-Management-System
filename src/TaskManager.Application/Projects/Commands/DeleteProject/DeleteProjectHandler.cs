@@ -5,7 +5,7 @@ using TaskManager.Infrastructure.Context;
 
 namespace TaskManager.Application.Projects.Commands;
 
-public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand>
+public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, DeleteProjectCommandResult>
 {
     private readonly ApplicationDbContext _context;
 
@@ -14,13 +14,18 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand>
         _context = context;
     }
 
-    public async Task Handle(DeleteProjectCommand common, CancellationToken cancellationToken)
+    public async Task<DeleteProjectCommandResult> Handle(DeleteProjectCommand common, CancellationToken cancellationToken)
     {
         var project = await _context.Projects
             .FirstOrDefaultAsync(p => p.Id == common.Id, cancellationToken);
+
         if (project is null) throw new NotFoundException("Проект не найден!");
         if (project.UserId != common.UserId) throw new ForbiddenException("Нет прав на удаление");
+
+        var id = project.Id;
         _context.Projects.Remove(project);
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new DeleteProjectCommandResult { Id = id };
     }
 }

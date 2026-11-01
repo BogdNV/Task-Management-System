@@ -1,6 +1,7 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Application.Exceptions;
 using TaskManager.Application.Projects.DTO;
 using TaskManager.Infrastructure.Context;
 
@@ -19,6 +20,9 @@ public class PaginatedProjectCommandHandler : IRequestHandler<PaginatedProjectCo
 
     public async Task<PaginatedProjectCommandResult> Handle(PaginatedProjectCommand request, CancellationToken cancellationToken)
     {
+        if (!_context.Users.Any(u => u.Id == request.UserId))
+            throw new NotFoundException("Пользователь не найден");
+
         var projects = _context.Projects
             .AsNoTracking()
             .Where(p => p.UserId == request.UserId)

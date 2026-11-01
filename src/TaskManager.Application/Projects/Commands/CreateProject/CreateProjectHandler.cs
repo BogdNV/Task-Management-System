@@ -1,12 +1,11 @@
 using AutoMapper;
 using MediatR;
-using TaskManager.Application.Projects.DTO;
 using TaskManager.Infrastructure.Context;
 using TaskManager.Infrastructure.Entities;
 
 namespace TaskManager.Application.Projects.Commands;
 
-public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, ProjectDto>
+public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, CreateProjectCommandResult>
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -16,21 +15,14 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, Projec
         _context = context;
         _mapper = mapper;
     }
-    public async Task<ProjectDto> Handle(CreateProjectCommand request, CancellationToken ct)
+    public async Task<CreateProjectCommandResult> Handle(CreateProjectCommand request, CancellationToken ct)
     {
-
-        var project = new ProjectEntity()
-        {
-            Title = request.Title,
-            Description = request.Description,
-            UserId = request.UserId,
-            CreatedAt = DateTime.UtcNow
-        };
-
+        var project = _mapper.Map<ProjectEntity>(request);
 
         _context.Add(project);
-        await _context.SaveChangesAsync();
+        project.CreatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync(ct);
 
-        return _mapper.Map<ProjectDto>(project);
+        return _mapper.Map<CreateProjectCommandResult>(project);
     }
 }

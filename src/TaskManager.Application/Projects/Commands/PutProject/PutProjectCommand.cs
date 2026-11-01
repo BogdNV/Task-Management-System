@@ -2,7 +2,7 @@ using MediatR;
 
 namespace TaskManager.Application.Projects.Commands;
 
-public class PutProjectCommand : IRequest
+public class PutProjectCommand : IRequest<PutProjectCommandResult>
 {
     public Guid UserId { get; set; }
     public int Id { get; set; }

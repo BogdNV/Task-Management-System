@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Application.Exceptions;
@@ -5,31 +6,33 @@ using TaskManager.Infrastructure.Context;
 
 namespace TaskManager.Application.Projects.Commands;
 
-public class PatchProjectHandler : IRequestHandler<PatchProjectCommand>
+public class PatchProjectHandler : IRequestHandler<PatchProjectCommand, PatchProjectCommandResult>
 {
     private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly TimeProvider _timeProvider;
 
-    public PatchProjectHandler(ApplicationDbContext context)
+    public PatchProjectHandler(ApplicationDbContext context, IMapper mapper, TimeProvider timeProvider)
     {
         _context = context;
+        _mapper = mapper;
+        _timeProvider = timeProvider;
     }
 
-    public async Task Handle(PatchProjectCommand common, CancellationToken cancellationToken)
+    public async Task<PatchProjectCommandResult> Handle(PatchProjectCommand request, CancellationToken cancellationToken)
     {
         var project = await _context.Projects
-            .FirstOrDefaultAsync(p => p.Id == common.Id, cancellationToken);
-        if (project is null) throw new NotFoundException("not found");
-        if (project.UserId != common.UserId) throw new ForbiddenException();
+            .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
+        if (project is null) throw new NotFoundException("Проект не найден");
 
-
-        if (string.IsNullOrEmpty(common.Title)
-            && string.IsNullOrEmpty(common.Description))
-            throw new Exception("пусто");
-
-        if (!string.IsNullOrEmpty(common.Title)) project.Title = common.Title;
-        if (!string.IsNullOrEmpty(common.Description)) project.Description = common.Description;
-        project.LastModified = DateTime.UtcNow;
+        if (request.Title is not null)
+            project.Title = request.Title;
+        if (request.Description is not null)
+            project.Description = request.Description;
+        project.LastModified = _timeProvider.GetUtcNow().UtcDateTime;
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return _mapper.Map<PatchProjectCommandResult>(project);
     }
 }

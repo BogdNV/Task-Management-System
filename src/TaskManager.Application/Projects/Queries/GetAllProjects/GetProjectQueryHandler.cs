@@ -1,13 +1,14 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Application.Exceptions;
 using TaskManager.Application.Projects.DTO;
-using TaskManager.Domain.Interfaces;
 using TaskManager.Infrastructure.Context;
+using TaskManager.Infrastructure.Entities;
 
 namespace TaskManager.Application.Projects.Queries.GetAllProjects;
 
-public class GetAllProjectsHandler : IRequestHandler<GetAllProjectsQuery, IEnumerable<ProjectDto>>
+public class GetAllProjectsHandler : IRequestHandler<GetAllProjectsQuery, GetProjectQueryResult>
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -18,20 +19,25 @@ public class GetAllProjectsHandler : IRequestHandler<GetAllProjectsQuery, IEnume
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProjectDto>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<GetProjectQueryResult> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
     {
-        var projects = _context.Projects
-            .AsNoTracking()
+        IQueryable<ProjectEntity> queryable = _context.Projects.AsNoTracking();
+
+        if (request.UserId is not null)
+        {
+            queryable = queryable.Where(p => p.UserId == request.UserId);
+        }
+
+        var projectList = await queryable
+            .Include(p => p.Tasks)
+            .Include(p => p.User)
+            .AsSplitQuery()
             .OrderBy(p => p.Id)
             .Skip((request.Offset - 1) * request.Limit)
             .Take(request.Limit)
-            .Include(p => p.Tasks)
-            .Include(p => p.User);
-
-        var projectList = await projects.ToListAsync();
-        var result = _mapper.Map<List<ProjectDto>>(projectList);
+            .ToListAsync(cancellationToken);
 
 
-        return result;
+        return new GetProjectQueryResult { Content = _mapper.Map<List<ProjectDto>>(projectList) };
     }
 }
