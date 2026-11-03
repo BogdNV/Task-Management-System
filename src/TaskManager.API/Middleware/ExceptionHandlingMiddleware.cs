@@ -33,6 +33,7 @@ public class ExceptionHandlingMiddleware
         var (status, title, detail) = exception switch
         {
             ValidationException ex => (400, "Validation Error", ex.Message),
+            UnauthorizedAccessException ex => (401, "Unauthorized", ex.Message),
             NotFoundException ex => (404, "Not Found", ex.Message),
             ForbiddenException ex => (403, "Forbidden", ex.Message),
             _ => (500, "Server Error", "Произошла непредвиденная ошибка")

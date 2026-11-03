@@ -30,7 +30,7 @@ public class LoginController : ControllerBase
         return Ok(new ApiResponse<LoginResponse>()
         {
             Data = _mapper.Map<LoginResponse>(result),
-            Message = "Done"
+            Message = "Success"
         });
     }
 }

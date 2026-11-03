@@ -57,7 +57,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ApiResponse<GetTaskQueryResult>> GetAllByStatusOrPriority(
+    public async Task<ApiResponse<GetTaskQueryResult>> GetTasks(
         [FromQuery] Status? status,
         [FromQuery] Priority? priority,
         CancellationToken ct)

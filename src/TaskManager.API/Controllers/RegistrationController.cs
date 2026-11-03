@@ -30,7 +30,7 @@ public class RegistrationController : ControllerBase
         return Ok(new ApiResponse<RegisterResponse>()
         {
             Data = _mapper.Map<RegisterResponse>(result),
-            Message = "Done"
+            Message = "Success"
         });
     }
 }

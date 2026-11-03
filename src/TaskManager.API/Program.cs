@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi;
+using TaskManager.API.Extensions;
 using TaskManager.API.Middleware;
 using TaskManager.Application.Extensions;
 using TaskManager.Infrastructure.Extensions;
@@ -11,11 +13,28 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(opt =>
+        {
+            opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Введите токен",
+                Name = "auth",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            });
+
+            opt.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", doc)] = []
+            });
+        });
         builder.Services.AddOpenApi();
         var connectionString = builder.Configuration.GetConnectionString("PostgreSqlConnection");
-        builder.Services.AddInfrastructure(connectionString);
-        builder.Services.AddScoped(typeof(IPasskeyHandler<>), typeof(PasswordHasher<>));
+        builder.Services.AddApiServices(builder.Configuration);
+        builder.Services.AddInfrastructure(connectionString!);
+        builder.Services.AddScoped(typeof(IPasswordHasher<>), typeof(PasswordHasher<>));
         builder.Services.AddApplication(builder);
 
         var app = builder.Build();
@@ -26,6 +45,9 @@ public class Program
             app.UseSwaggerUI();
         }
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
 
