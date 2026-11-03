@@ -94,4 +94,17 @@ public class TaskController : ControllerBase
             Message = "Success"
         };
     }
+
+    [HttpDelete("completed")]
+    public async Task<ApiResponse<ClearCompletedTasksCommandResult>> ClearCompletedTasks(CancellationToken ct)
+    {
+        var command = new ClearCompletedTasksCommand { UserId = _idService.Id };
+        var result = await _mediator.Send(command, ct);
+
+        return new ApiResponse<ClearCompletedTasksCommandResult>
+        {
+            Data = result,
+            Message = "Completed tasks cleared successfully"
+        };
+    }
 }
