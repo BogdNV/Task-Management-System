@@ -16,13 +16,13 @@ public class PutProjectHandler : IRequestHandler<PutProjectCommand, PutProjectCo
         _mapper = mapper;
     }
 
-    public async Task<PutProjectCommandResult> Handle(PutProjectCommand command, CancellationToken cancellationToken)
+    public async Task<PutProjectCommandResult> Handle(PutProjectCommand request, CancellationToken cancellationToken)
     {
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == command.Id);
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == request.Id && p.UserId == request.UserId);
         if (project is null) throw new NotFoundException("Проект не найден");
 
-        project.Title = command.Title;
-        project.Description = command.Description;
+        project.Title = request.Title;
+        project.Description = request.Description;
         project.LastModified = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);

@@ -13,11 +13,10 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
 
         RuleFor(u => u.Email)
             .NotEmpty()
-            .EmailAddress().WithMessage("Некорректный email")
-            .MinimumLength(3)
-            .MaximumLength(100);
+            .EmailAddress().WithMessage("Некорректный email");
 
         RuleFor(u => u.Password)
+            .MinimumLength(5)
             .NotEmpty();
     }
 }

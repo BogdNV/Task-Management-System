@@ -22,7 +22,7 @@ public class PatchProjectHandler : IRequestHandler<PatchProjectCommand, PatchPro
     public async Task<PatchProjectCommandResult> Handle(PatchProjectCommand request, CancellationToken cancellationToken)
     {
         var project = await _context.Projects
-            .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(p => p.Id == request.Id && p.UserId == request.UserId, cancellationToken);
         if (project is null) throw new NotFoundException("Проект не найден");
 
         if (request.Title is not null)

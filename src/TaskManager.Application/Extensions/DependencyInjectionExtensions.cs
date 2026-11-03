@@ -1,9 +1,7 @@
 using System.Reflection;
 using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TaskManager.Application.Common.Behaviors;
 
 namespace TaskManager.Application.Extensions;
 
@@ -19,9 +17,6 @@ public static class DependencyInjectionExtensions
             });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }
