@@ -50,7 +50,7 @@ public class TaskItem
 
     public void ChangeStatus(Status newStatus)
     {
-        if (Status == Status.Done && newStatus != Status.Done)
+        if (Status == Status.Completed && newStatus != Status.Completed)
             throw new InvalidOperationException("Нельзя изменить статус выполненой задачи");
         Status = newStatus;
     }
