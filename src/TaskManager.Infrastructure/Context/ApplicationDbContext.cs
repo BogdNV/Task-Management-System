@@ -9,6 +9,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<ProjectEntity> Projects => Set<ProjectEntity>();
     public DbSet<TaskItemEntity> Tasks => Set<TaskItemEntity>();
     public DbSet<UserEntity> Users => Set<UserEntity>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,5 +18,6 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         modelBuilder.ApplyConfiguration(new TaskItemConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 }
