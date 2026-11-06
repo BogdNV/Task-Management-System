@@ -2,7 +2,6 @@ using MediatR;
 using TaskManager.API.Models.Request;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.Users.Commands;
-using TaskManager.Application.Users.DTO;
 using AutoMapper;
 using TaskManager.API.Models.Response;
 
@@ -23,7 +22,7 @@ public class RegistrationController : ControllerBase
 
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserDto>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<RegisterResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<RegisterUserCommand>(request);
         var result = await _mediator.Send(command, cancellationToken);

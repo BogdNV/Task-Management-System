@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Abstractions.Inrefaces;
+using TaskManager.Application.Users.DTO;
 using TaskManager.Domain.Entities;
 using TaskManager.Infrastructure.Context;
 using TaskManager.Infrastructure.Entities;
@@ -33,7 +34,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
 
         if (userExists)
         {
-            // throw exception
+            throw new UnauthorizedAccessException("Пользователь с таким email уже существует!");
         }
 
         request.Password = _passwordHasher.HashPassword(null!, request.Password);
@@ -47,16 +48,19 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         };
 
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
 
         var accessToken = _tokenService.GenerateAccessToken(user.Id);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        await _tokenService.SaveRefreshToken(user.Id, refreshToken, 7, cancellationToken);
 
         return new RegisterUserCommandResult()
         {
             Id = user.Id,
             Name = user.Name,
             Email = user.Email,
-            AccessToken = accessToken
+            Token = new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken }
         };
 
     }
