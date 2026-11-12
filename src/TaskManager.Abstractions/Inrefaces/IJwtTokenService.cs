@@ -5,8 +5,8 @@ namespace TaskManager.Abstractions.Inrefaces;
 public interface IJwtTokenService
 {
     string GenerateAccessToken(Guid userId);
-    string GenerateRefreshToken();
     Task<RefreshToken?> GetRefreshToken(string token, CancellationToken ct);
-    Task RevokeRefreshToken(string storedToken, CancellationToken ct, string? replacedByToken = null);
-    Task SaveRefreshToken(Guid userId, string refreshToken, int daysToExpire, CancellationToken ct);
+    Task RevokeRefreshToken(RefreshToken storedToken, CancellationToken ct, string? replacedByToken = null);
+    Task<string> SaveRefreshToken(Guid userId, CancellationToken ct);
+    void SetTokenInsideCookie(string accessToken, string refreshToken);
 }
