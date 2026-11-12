@@ -46,6 +46,11 @@ public class Program
         }
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+        // Frontend из wwwroot раздаётся с тем же origin, что и API,
+        // поэтому CORS не требуется, а куки остаются first-party.
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
         app.UseAuthentication();
         app.UseAuthorization();
 

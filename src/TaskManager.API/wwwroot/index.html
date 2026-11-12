@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Экран авторизации -->
+    <section id="auth-screen" class="screen">
+        <div class="auth-card">
+            <h1 class="auth-title">Task Manager</h1>
+
+            <div class="tabs">
+                <button class="tab active" data-auth-tab="login">Вход</button>
+                <button class="tab" data-auth-tab="register">Регистрация</button>
+            </div>
+
+            <form id="login-form" class="auth-form">
+                <label>
+                    Email
+                    <input type="email" name="email" required autocomplete="email" placeholder="user@example.com">
+                </label>
+                <label>
+                    Пароль
+                    <input type="password" name="password" required minlength="5" autocomplete="current-password">
+                </label>
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+
+            <form id="register-form" class="auth-form hidden">
+                <label>
+                    Имя
+                    <input type="text" name="name" required minlength="3" maxlength="25" autocomplete="name">
+                </label>
+                <label>
+                    Email
+                    <input type="email" name="email" required autocomplete="email">
+                </label>
+                <label>
+                    Пароль
+                    <input type="password" name="password" required minlength="5" autocomplete="new-password">
+                </label>
+                <button type="submit" class="btn btn-primary btn-block">Создать аккаунт</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Основной экран -->
+    <section id="app-screen" class="screen hidden">
+        <header class="topbar">
+            <span class="topbar-brand">Task Manager</span>
+            <div class="topbar-user">
+                <span id="current-user" class="muted"></span>
+                <button id="logout-btn" class="btn btn-ghost">Выйти</button>
+            </div>
+        </header>
+
+        <div class="layout">
+            <!-- Проекты -->
+            <aside class="sidebar">
+                <div class="sidebar-head">
+                    <h2>Проекты</h2>
+                    <button id="new-project-btn" class="btn btn-small btn-primary">+</button>
+                </div>
+                <ul id="project-list" class="project-list"></ul>
+                <div class="pager">
+                    <button id="prev-page" class="btn btn-small btn-ghost">&larr;</button>
+                    <span id="page-info" class="muted">1</span>
+                    <button id="next-page" class="btn btn-small btn-ghost">&rarr;</button>
+                </div>
+            </aside>
+
+            <!-- Задачи выбранного проекта -->
+            <main class="content">
+                <div id="project-empty" class="empty">
+                    Выберите проект или создайте новый
+                </div>
+
+                <div id="project-detail" class="hidden">
+                    <div class="content-head">
+                        <div>
+                            <h2 id="project-title"></h2>
+                            <p id="project-description" class="muted"></p>
+                        </div>
+                        <div class="content-actions">
+                            <button id="edit-project-btn" class="btn btn-ghost">Изменить</button>
+                            <button id="delete-project-btn" class="btn btn-danger">Удалить</button>
+                        </div>
+                    </div>
+
+                    <div class="toolbar">
+                        <label class="inline">
+                            Статус
+                            <select id="filter-status">
+                                <option value="">Все</option>
+                                <option value="0">Новая</option>
+                                <option value="1">В работе</option>
+                                <option value="2">Выполнено</option>
+                            </select>
+                        </label>
+                        <label class="inline">
+                            Приоритет
+                            <select id="filter-priority">
+                                <option value="">Все</option>
+                                <option value="0">Низкий</option>
+                                <option value="1">Средний</option>
+                                <option value="2">Высокий</option>
+                            </select>
+                        </label>
+                        <button id="new-task-btn" class="btn btn-primary">Новая задача</button>
+                        <button id="clear-completed-btn" class="btn btn-ghost">Очистить выполненные</button>
+                    </div>
+
+                    <ul id="task-list" class="task-list"></ul>
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- Модалка проекта -->
+    <div id="project-modal" class="modal hidden">
+        <div class="modal-card">
+            <h3 id="project-modal-title">Новый проект</h3>
+            <form id="project-form" class="auth-form">
+                <input type="hidden" name="id">
+                <label>
+                    Название
+                    <input type="text" name="title" required minlength="5" maxlength="100">
+                </label>
+                <label>
+                    Описание
+                    <textarea name="description" rows="4" maxlength="1000" required></textarea>
+                </label>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" data-close-modal>Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модалка задачи -->
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-card">
+            <h3>Новая задача</h3>
+            <form id="task-form" class="auth-form">
+                <label>
+                    Название
+                    <input type="text" name="title" required minlength="3" maxlength="100">
+                </label>
+                <label>
+                    Описание
+                    <textarea name="description" rows="3" maxlength="1000"></textarea>
+                </label>
+                <div class="grid-2">
+                    <label>
+                        Приоритет
+                        <select name="priority">
+                            <option value="0">Низкий</option>
+                            <option value="1" selected>Средний</option>
+                            <option value="2">Высокий</option>
+                        </select>
+                    </label>
+                    <label>
+                        Срок
+                        <input type="date" name="dueDate">
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" data-close-modal>Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
