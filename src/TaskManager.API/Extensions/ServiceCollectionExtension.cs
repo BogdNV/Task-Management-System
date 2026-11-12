@@ -33,8 +33,20 @@ public static class ServiceCollectionExtension
                 {
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                    ValidateLifetime = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings!.SecretKey)),
                     ValidateIssuerSigningKey = true
+                };
+
+                op.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx =>
+                    {
+                        ctx.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+                        if (!string.IsNullOrEmpty(accessToken))
+                            ctx.Token = accessToken;
+                        return Task.CompletedTask;
+                    }
                 };
             });
         return services;

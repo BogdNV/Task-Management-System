@@ -5,7 +5,6 @@ using TaskManager.API.Models.Response;
 using TaskManager.API.Models.Request;
 using TaskManager.Application.Users.Commands.Login;
 using TaskManager.Application.Users.Commands.Logout;
-using TaskManager.Application.Users.DTO;
 using TaskManager.Application.Users.Commands.Refresh;
 using Microsoft.AspNetCore.Authorization;
 using TaskManager.Abstractions.Inrefaces;
@@ -31,6 +30,7 @@ public class LoginController : ControllerBase
     public async Task<IActionResult> Login(LoginRequest login, CancellationToken cancellationToken)
     {
         var command = _mapper.Map<LoginUserCommand>(login);
+        command.SaveToCookie = true;
 
         var result = await _mediator.Send(command, cancellationToken);
 
@@ -41,26 +41,24 @@ public class LoginController : ControllerBase
         });
     }
 
-
+    [Authorize]
     [HttpPost("refresh")]
-    public async Task<ActionResult<ApiResponse<RefreshTokenCommandResult>>> Refresh([FromBody] TokenDto token, CancellationToken ct)
+    public async Task<IActionResult> Refresh(CancellationToken ct)
     {
-        var command = new RefreshTokenCommand { RefreshToken = token.RefreshToken };
-        var result = await _mediator.Send(command, ct);
+        HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+        var command = new RefreshTokenCommand { RefreshToken = refreshToken };
+        await _mediator.Send(command, ct);
 
-        return new ApiResponse<RefreshTokenCommandResult>
-        {
-            Data = result,
-            Message = "Success"
-        };
+        return Ok();
     }
 
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout([FromBody] TokenDto token, CancellationToken ct)
+    public async Task<IActionResult> Logout(CancellationToken ct)
     {
-        await _mediator.Send(new LogoutUserCommand { UserId = _idService.Id, Token = token.RefreshToken }, ct);
+        HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+        await _mediator.Send(new LogoutUserCommand { UserId = _idService.Id, Token = refreshToken }, ct);
         return Ok();
     }
 }

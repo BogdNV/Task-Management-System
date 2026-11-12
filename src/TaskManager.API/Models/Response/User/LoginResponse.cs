@@ -1,5 +1,3 @@
-using TaskManager.Application.Users.DTO;
-
 namespace TaskManager.API.Models.Response;
 
 public class LoginResponse
@@ -7,5 +5,4 @@ public class LoginResponse
     public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public required TokenDto Token { get; set; }
 }
