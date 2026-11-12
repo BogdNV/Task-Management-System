@@ -1,4 +1,3 @@
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,9 +41,8 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUs
             throw new UnauthorizedAccessException("Неверный пароль");
 
         var accessToken = _tokenService.GenerateAccessToken(user.Id);
-        var refreshToken = _tokenService.GenerateRefreshToken();
 
-        await _tokenService.SaveRefreshToken(user.Id, refreshToken, 7, cancellationToken);
+        var refreshToken = await _tokenService.SaveRefreshToken(user.Id, cancellationToken);
 
         var result = new LoginUserCommandResult
         {

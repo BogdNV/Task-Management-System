@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using TaskManager.Abstractions.Inrefaces;
 using TaskManager.Application.Users.DTO;
 using TaskManager.Infrastructure.Context;
@@ -19,15 +18,17 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, R
 
     public async Task<RefreshTokenCommandResult> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == request.RefreshToken, cancellationToken);
+
+        // var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == request.RefreshToken, cancellationToken);
+        var token = await _tokenService.GetRefreshToken(request.RefreshToken, cancellationToken);
         if (token is null || !token.IsActive)
             throw new UnauthorizedAccessException("Недействительно или истек срок действия токена");
 
         var accessToken = _tokenService.GenerateAccessToken(token.UserId);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+        var refreshToken = await _tokenService.SaveRefreshToken(token.UserId, cancellationToken);
 
-        await _tokenService.RevokeRefreshToken(token.Token, cancellationToken, refreshToken);
-        await _tokenService.SaveRefreshToken(token.UserId, refreshToken, 7, cancellationToken);
+        // await _tokenService.RevokeRefreshToken(token, cancellationToken, refreshToken);
+
 
         return new RefreshTokenCommandResult
         {

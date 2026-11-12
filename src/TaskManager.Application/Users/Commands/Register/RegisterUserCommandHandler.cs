@@ -51,9 +51,9 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         await _context.SaveChangesAsync(cancellationToken);
 
         var accessToken = _tokenService.GenerateAccessToken(user.Id);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+        var refreshToken = await _tokenService.SaveRefreshToken(user.Id, cancellationToken);
 
-        await _tokenService.SaveRefreshToken(user.Id, refreshToken, 7, cancellationToken);
+
 
         return new RegisterUserCommandResult()
         {
