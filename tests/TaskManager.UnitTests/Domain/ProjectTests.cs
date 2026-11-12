@@ -7,20 +7,22 @@ public class ProjectTests
     [Fact]
     public void Ctor_WithValidData_ShouldInitializeCorrectly()
     {
-        var ctorThreeParameters = new Project("Valid Project name", "Some description", 1);
+        var userId = Guid.NewGuid();
+        var ownerId = Guid.NewGuid();
+        var ctorThreeParameters = new Project("Valid Project name", "Some description", userId);
         var utcNow = DateTime.UtcNow;
-        var ctorFiveParameters = new Project(42, "Valid name", "desc", 3, utcNow);
+        var ctorFiveParameters = new Project(42, "Valid name", "desc", ownerId, utcNow);
 
         Assert.Equal("Valid Project name", ctorThreeParameters.Name);
         Assert.Equal("Some description", ctorThreeParameters.Description);
-        Assert.Equal(1, ctorThreeParameters.OwnerId);
+        Assert.Equal(userId, ctorThreeParameters.UserId);
         Assert.Equal(0, ctorThreeParameters.Id);
         Assert.Empty(ctorThreeParameters.Tasks);
         Assert.InRange((DateTime.UtcNow - ctorThreeParameters.CreatedAt).TotalSeconds, 0, 2);
 
         Assert.Equal("Valid name", ctorFiveParameters.Name);
         Assert.Equal("desc", ctorFiveParameters.Description);
-        Assert.Equal(3, ctorFiveParameters.OwnerId);
+        Assert.Equal(ownerId, ctorFiveParameters.UserId);
         Assert.Equal(42, ctorFiveParameters.Id);
         Assert.Equal(utcNow, ctorFiveParameters.CreatedAt);
         Assert.Empty(ctorFiveParameters.Tasks);
@@ -30,9 +32,9 @@ public class ProjectTests
     [InlineData("", "Название не должно быть пустым")]
     [InlineData(null, "Название не должно быть пустым")]
     [InlineData("abc", "Название должно быть длиной минимум 5 символов")]
-    public void Ctor_WithNameTooShortNullOrEmpty_ThrowsArgumentException(string invalidName, string expectedMessage)
+    public void Ctor_WithNameTooShortNullOrEmpty_ThrowsArgumentException(string? invalidName, string expectedMessage)
     {
-        var ex = Assert.Throws<ArgumentException>(() => new Project(invalidName, "desc", 1));
+        var ex = Assert.Throws<ArgumentException>(() => new Project(invalidName!, "desc", Guid.NewGuid()));
 
         Assert.Contains(expectedMessage, ex.Message);
     }
@@ -41,9 +43,9 @@ public class ProjectTests
     [InlineData("", "Описание не должно быть пустым")]
     [InlineData(null, "Описание не должно быть пустым")]
     [InlineData("   ", "Описание состоит из пробелов")]
-    public void Ctor_WithDescriptionWhiteSpaceOrNullOrEmpty_ThrowsArgumentException(string invalidDescription, string expectedMessage)
+    public void Ctor_WithDescriptionWhiteSpaceOrNullOrEmpty_ThrowsArgumentException(string? invalidDescription, string expectedMessage)
     {
-        var ex = Assert.Throws<ArgumentException>(() => new Project("Tests", invalidDescription, 1));
+        var ex = Assert.Throws<ArgumentException>(() => new Project("Tests", invalidDescription!, Guid.NewGuid()));
 
         Assert.Contains(expectedMessage, ex.Message);
     }
@@ -51,7 +53,7 @@ public class ProjectTests
     [Fact]
     public void UpdateName_WithValidName_ShouldUpdateProperty()
     {
-        var proj = new Project("Valid Project name", "Some description", 1);
+        var proj = new Project("Valid Project name", "Some description", Guid.NewGuid());
 
         proj.UpdateName("NewName");
 
@@ -64,9 +66,9 @@ public class ProjectTests
     [InlineData("abc", "Название должно быть длиной минимум 5 символов")]
     public void UpdateName_WithInvalidName_ShouldThrowArgumentException(string? invalidName, string expectedMessage)
     {
-        var proj = new Project("Valid Project name", "Some description", 1);
+        var proj = new Project("Valid Project name", "Some description", Guid.NewGuid());
 
-        var ex = Assert.Throws<ArgumentException>(() => proj.UpdateName(invalidName));
+        var ex = Assert.Throws<ArgumentException>(() => proj.UpdateName(invalidName!));
 
         Assert.Contains(expectedMessage, ex.Message);
     }
@@ -74,7 +76,7 @@ public class ProjectTests
     [Fact]
     public void UpdateDescription_WithValidDescription_ShouldUpdateProperty()
     {
-        var proj = new Project("Valid Project name", "Some description", 1);
+        var proj = new Project("Valid Project name", "Some description", Guid.NewGuid());
 
         proj.UpdateDescription("desc");
 
@@ -85,11 +87,11 @@ public class ProjectTests
     [InlineData("", "Описание не должно быть пустым")]
     [InlineData(null, "Описание не должно быть пустым")]
     [InlineData("  ", "Описание состоит из пробелов")]
-    public void UpdateDescription_WithNullEmptyOrWhitespace_ShouldThrowArgumentException(string invalidDescription, string expectedMessage)
+    public void UpdateDescription_WithNullEmptyOrWhitespace_ShouldThrowArgumentException(string? invalidDescription, string expectedMessage)
     {
-        var proj = new Project("Valid Project name", "Some description", 1);
+        var proj = new Project("Valid Project name", "Some description", Guid.NewGuid());
 
-        var ex = Assert.Throws<ArgumentException>(() => proj.UpdateDescription(invalidDescription));
+        var ex = Assert.Throws<ArgumentException>(() => proj.UpdateDescription(invalidDescription!));
 
         Assert.Contains(expectedMessage, ex.Message);
 
@@ -98,7 +100,7 @@ public class ProjectTests
     [Fact]
     public void UpdateDescription_ExceedsMaxLength_ShouldThrowArgumentException()
     {
-        var proj = new Project("Valid Project name", "Some description", 1);
+        var proj = new Project("Valid Project name", "Some description", Guid.NewGuid());
         var newDescription = new string('a', Project.MAX_DESCRIPTION_LENGTH + 1);
 
         var ex = Assert.Throws<ArgumentException>(() => proj.UpdateDescription(newDescription));
@@ -109,9 +111,9 @@ public class ProjectTests
     [Fact]
     public void AddTask_WithNullTask_ShouldThrowArgumentNullException()
     {
-        var proj = new Project("Valid Project name", "Some description", 1);
+        var proj = new Project("Valid Project name", "Some description", Guid.NewGuid());
 
-        var ex = Assert.Throws<ArgumentNullException>(() => proj.AddTask(null));
+        var ex = Assert.Throws<ArgumentNullException>(() => proj.AddTask(null!));
 
         Assert.Contains("Задача не может быть null", ex.Message);
     }

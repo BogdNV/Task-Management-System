@@ -50,9 +50,9 @@ public class TaskItemTests
     [InlineData("", "Название не может быть пустым")]
     [InlineData(null, "Название не может быть пустым")]
     [InlineData("  ", "Название состоит из пробелов")]
-    public void ValidateTitle_WithInvalidTitle_ThrowsArgumentException(string invalidTitle, string expectedMessage)
+    public void ValidateTitle_WithInvalidTitle_ThrowsArgumentException(string? invalidTitle, string expectedMessage)
     {
-        var ex = Assert.Throws<ArgumentException>(() => new TaskItem(invalidTitle, "desc", 1, null));
+        var ex = Assert.Throws<ArgumentException>(() => new TaskItem(invalidTitle!, "desc", 1, null));
 
         Assert.Contains(expectedMessage, ex.Message);
     }
@@ -70,12 +70,12 @@ public class TaskItemTests
     [InlineData("", "Описание задачи не может быть пустым")]
     [InlineData(null, "Описание задачи не может быть пустым")]
     [InlineData("  ", "Описание задачи не может быть пустым")]
-    public void ValidateDescription_WithInvalidDescription_ThrowsArgumentException(string invalidDesc, string expectedMessage)
+    public void ValidateDescription_WithInvalidDescription_ThrowsArgumentException(string? invalidDesc, string expectedMessage)
     {
         // Given
 
         // When
-        var ex = Assert.Throws<ArgumentException>(() => new TaskItem("title", invalidDesc, 1, null));
+        var ex = Assert.Throws<ArgumentException>(() => new TaskItem("title", invalidDesc!, 1, null));
 
         // Then
         Assert.Contains(expectedMessage, ex.Message);
@@ -108,7 +108,7 @@ public class TaskItemTests
     [Theory]
     [InlineData(Status.New)]
     [InlineData(Status.InProgress)]
-    [InlineData(Status.Done)]
+    [InlineData(Status.Completed)]
     public void ChangeStatus_UpdateStatus_Success(Status status)
     {
         // Given
@@ -126,7 +126,7 @@ public class TaskItemTests
     {
         // Given
         var task = new TaskItem("title", "desc", 1, null);
-        task.ChangeStatus(Status.Done);
+        task.ChangeStatus(Status.Completed);
         // When
         var ex = Assert.Throws<InvalidOperationException>(() => task.ChangeStatus(status));
         // Then
@@ -152,7 +152,7 @@ public class TaskItemTests
     {
         // Given
         var task = new TaskItem("title", "desc", 1, null);
-        var project = new Project(1, "Test project", "Tests", 1, DateTime.UtcNow);
+        var project = new Project(1, "Test project", "Tests", Guid.NewGuid(), DateTime.UtcNow);
         // When
         task.AssignToProject(project);
         // Then
@@ -165,7 +165,7 @@ public class TaskItemTests
     {
         // Given
         var task = new TaskItem("title", "desc", 1, null);
-        var project = new Project("Test project", "Tests", 1);
+        var project = new Project("Test project", "Tests", Guid.NewGuid());
         // When
         var ex = Assert.Throws<ArgumentException>(() => task.AssignToProject(project));
         // Then
